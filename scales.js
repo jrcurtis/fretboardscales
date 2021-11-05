@@ -57,21 +57,40 @@ window.addEventListener('load', function()
 
     function generateNoteNames(scale)
     {
-        let scaleNoteNames = [];
+        let sharps = 0;
+        let flats = 0;
         let scaleI = (12 - scaleRoot) % 12;
         for (let i = 0; i < 12; i++)
         {
             let name = noteOptions[i];
-            console.log('name ' + name);
-            if (name.indexOf('/') >= 0)
+            if (scale[scaleI] && name.indexOf('/') >= 0)
             {
-                let skipped = !scale[(scaleI + 11) % 12];
-                name = name.split('/')[skipped ? 0 : 1];
-                console.log('alter ' + name);
+                if (!scale[(scaleI + 11) % 12])
+                {
+                    sharps++;
+                }
+                if (!scale[(scaleI + 1) % 12])
+                {
+                    flats++;
+                }
             }
-            scaleNoteNames.push(name);
             scaleI = (scaleI + 1) % 12;
         }
+        console.log('sharps ' + sharps + ' flats ' + flats);
+
+        let choice = sharps <= flats ? 1 : 0;
+        console.log('choice ' + choice);
+        let scaleNoteNames = [];
+        for (let i = 0; i < 12; i++)
+        {
+            let name = noteOptions[i];
+            if (name.indexOf('/') >= 0)
+            {
+                name = name.split('/')[choice];
+            }
+            scaleNoteNames.push(name);
+        }
+
         return scaleNoteNames;
     }
 
