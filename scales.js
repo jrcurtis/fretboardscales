@@ -76,10 +76,8 @@ window.addEventListener('load', function()
             }
             scaleI = (scaleI + 1) % 12;
         }
-        console.log('sharps ' + sharps + ' flats ' + flats);
 
         let choice = sharps <= flats ? 1 : 0;
-        console.log('choice ' + choice);
         let scaleNoteNames = [];
         for (let i = 0; i < 12; i++)
         {
