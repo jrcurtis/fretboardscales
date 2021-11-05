@@ -8,35 +8,49 @@
 
     <body>
         <div id="settings" class="panel">
-            <div>
-                strings
-                <input type="number" min="1" id="numstrings" value ="6" />
-                <span id="tuning"> </span>
+            <div class="block">
+                <div class="row">
+                    strings
+                    <input type="number" min="1" id="numstrings" value="6" size="3" />
+                    <span id="tuning"> </span>
+                </div>
+                <div class="row">
+                    scale
+                    <select id="scaleroot">
+                        <option value="0">C</option>
+                        <option value="1">C#/Db</option>
+                        <option value="2">D</option>
+                        <option value="3">D#/Eb</option>
+                        <option value="4">E</option>
+                        <option value="5">F</option>
+                        <option value="6">F#/Gb</option>
+                        <option value="7">G</option>
+                        <option value="8">G#/Ab</option>
+                        <option value="9">A</option>
+                        <option value="10">A#/Bb</option>
+                        <option value="11">B</option>
+                    </select>
+                    <span id="scalenotes"></span>
+                    <input type="button" id="prevmode" value="Previous mode" />
+                    <input type="button" id="nextmode" value="Next mode" />
+                </div>
+                <div class="row">
+                    highlight
+                    <input type="number" id="highlightstart" value="0" />
+                    <input type="number" id="highlightend" value="22" />
+                </div>
             </div>
-            <div>
-                scale
-                <select id="scaleroot">
-                    <option value="0">C</option>
-                    <option value="1">C#/Db</option>
-                    <option value="2">D</option>
-                    <option value="3">D#/Eb</option>
-                    <option value="4">E</option>
-                    <option value="5">F</option>
-                    <option value="6">F#/Gb</option>
-                    <option value="7">G</option>
-                    <option value="8">G#/Ab</option>
-                    <option value="9">A</option>
-                    <option value="10">A#/Bb</option>
-                    <option value="11">B</option>
-                </select>
-                <span id="scalenotes"></span>
-                <input type="button" id="prevmode" value="Previous mode" />
-                <input type="button" id="nextmode" value="Next mode" />
-            </div>
-            <div>
-                highlight
-                <input type="number" id="highlightstart" value="0" />
-                <input type="number" id="highlightend" value="22" />
+            <div class="block">
+                <div class="row">
+                    name
+                    <input type="text" id="savename">
+                    <input type="button" value="Save" id="save" />
+                </div>
+                <div class="row">
+                    <select id="loadlist"></select>
+                    <input type="button" value="Load" id="load" />
+                    <input type="button" value="Delete" id="delete" />
+                </div>
             </div>
         </div>
     </body>

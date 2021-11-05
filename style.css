@@ -9,13 +9,22 @@
     border-radius: 6px;
 }
 
-.panel>div
+.panel .row
 {
      margin-bottom: 0.25em;
      padding-bottom: 0.25em;
-     border-style: solid;
-     border-width: 0px 0px 1px 0px;
-     border-color: #008;
+}
+
+.panel .row:not(:last-child)
+{
+    border-style: solid;
+    border-width: 0px 0px 1px 0px;
+    border-color: #008;
+}
+
+.panel .block
+{
+    display: inline-block;
 }
 
 .fretboard

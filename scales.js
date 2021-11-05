@@ -25,6 +25,8 @@ window.addEventListener('load', function()
     let scaleNotesContainer = document.getElementById('scalenotes');
     let highlightStartInput = document.getElementById('highlightstart');
     let highlightEndInput = document.getElementById('highlightend');
+    let saveNameInput = document.getElementById('savename');
+    let loadListSelect = document.getElementById('loadlist');
 
     numStringsInput.onchange = onNumStringsChanged;
     scaleRootInput.onchange = onScaleRootChanged;
@@ -33,10 +35,13 @@ window.addEventListener('load', function()
 
     document.getElementById('prevmode').onclick = function() { cycleMode(-1); };
     document.getElementById('nextmode').onclick = function() { cycleMode(1); };
-
+    document.getElementById('save').onclick = save;
+    document.getElementById('load').onclick = load;
+    document.getElementById('delete').onclick = deleteSave;
 
     generateTuningInputs();
     generateScaleNoteInputs();
+    populateLoadList();
 
     updateUI();
 
@@ -204,7 +209,7 @@ window.addEventListener('load', function()
                 let highlighted = f >= highlightStart && f <= highlightEnd;
                 note.style.opacity = highlighted ? '100%' : '33%';
                 note.textContent = intervalNames[scaleOffset];
-                note.title = scaleNoteNames[noteI];
+                note.title = scaleNoteNames[noteI] + octaveI;
                 fretboard.appendChild(note);
                 noteNum++;
             }
@@ -241,7 +246,7 @@ window.addEventListener('load', function()
             let octaveInput = document.createElement('input');
             octaveInput.type = 'number';
             octaveInput.value = 2;
-            octaveInput.style.width = '4em';
+            octaveInput.size = 3;
             octaveInput.onchange = onTuningChanged;
             noteContainer.appendChild(noteSelect);
             noteContainer.appendChild(octaveInput);
@@ -337,4 +342,85 @@ window.addEventListener('load', function()
         fretboard = newFretboard;
     }
 
+    function toJSON()
+    {
+        return JSON.stringify({
+            'numFrets': numFrets,
+            'numStrings': numStrings,
+            'scaleRoot': scaleRoot,
+            'scale': scale,
+            'tuning': tuning,
+            'highlightStart': highlightStart,
+            'highlightEnd': highlightEnd
+            });
+    }
+
+    function loadJSON(json)
+    {
+        let data = JSON.parse(json);
+        numFrets = data.numFrets;
+        numStrings = data.numStrings;
+        scaleRoot = data.scaleRoot;
+        scale = data.scale;
+        scaleDegrees = generateScaleDegrees(scale);
+        scaleNoteNames = generateNoteNames(scale);
+        tuning = data.tuning;
+        highlightStart = data.highlightStart;
+        highlightEnd = data.highlightEnd;
+        updateUI();
+        updateFretboard();
+    }
+
+    function populateLoadList()
+    {
+        let storage = window.localStorage;
+
+        loadListSelect.replaceChildren();
+        for (let i = 0; i < storage.length; i++)
+        {
+            let name = storage.key(i);
+            let option = document.createElement('option');
+            option.value = option.textContent = name;
+            loadListSelect.appendChild(option);
+        }
+    }
+
+    function save()
+    {
+        let storage = window.localStorage;
+
+        let name = saveNameInput.value;
+        if (name == '')
+        {
+            let saveI = 1;
+            while (storage.getItem('Save ' + saveI) != null)
+            {
+                saveI++;
+            }
+            name = 'Save ' + saveI;
+        }
+        storage.setItem(name, toJSON());
+        populateLoadList();
+    }
+
+    function load()
+    {
+        let storage = window.localStorage;
+
+        let name = loadListSelect.value;
+        let json = storage.getItem(name);
+        if (json != null)
+        {
+            loadJSON(json);
+        }
+        saveNameInput.value = name;
+    }
+
+    function deleteSave()
+    {
+        let storage = window.localStorage;
+
+        storage.removeItem(loadListSelect.value);
+        populateLoadList();
+    }
 });
