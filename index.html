@@ -1,0 +1,41 @@
+
+<html>
+    <head>
+        <title>scales</title>
+        <script src="scales.js" ></script>
+        <link rel="stylesheet" href="style.css" />
+    </head>
+
+    <body>
+        <div id="settings" class="panel">
+            <div>
+                strings
+                <input type="number" min="1" id="numstrings" value ="6" />
+                <span id="tuning"> </span>
+            </div>
+            <div>
+                scale
+                <select id="scaleroot">
+                    <option value="0">C</option>
+                    <option value="1">C#/Db</option>
+                    <option value="2">D</option>
+                    <option value="3">D#/Eb</option>
+                    <option value="4">E</option>
+                    <option value="5">F</option>
+                    <option value="6">F#/Gb</option>
+                    <option value="7">G</option>
+                    <option value="8">G#/Ab</option>
+                    <option value="9">A</option>
+                    <option value="10">A#/Bb</option>
+                    <option value="11">B</option>
+                </select>
+                <span id="scalenotes"></span>
+            </div>
+            <div>
+                highlight
+                <input type="number" id="highlightstart" value="0" />
+                <input type="number" id="highlightend" value="22" />
+            </div>
+        </div>
+    </body>
+</html>
