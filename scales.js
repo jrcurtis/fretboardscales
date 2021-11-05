@@ -2,18 +2,19 @@
 
 window.addEventListener('load', function()
 {
+    let colors = ['#D91313', '#DE6817', '#DF7F0D', '#9CD523', '#0E9E09', '#3FC48A', '#1DC9B5', '#2A62CE', '#7F4CD4', '#C04CD4', '#E55EC2', '#E54783'];
+    let noteOptions = ['C', 'C#/Db', 'D', 'D#/Eb', 'E', 'F', 'F#/Gb', 'G', 'G#/Ab', 'A', 'A#/Bb', 'B'];
+    let intervalNames = ['1', 'm2', '2', 'm3', '3', '4', 'b5', '5', '#5', '6', 'm7', '7'];
+
     let numFrets = 22;
     let numStrings = 6;
     let scaleRoot = 0;
     let scale = [true, false, true, false, true, true, false, true, false, true, false, true];
     let scaleDegrees = generateScaleDegrees(scale);
+    let scaleNoteNames = generateNoteNames(scale);
     let tuning = [40, 45, 50, 55, 59, 64];
     let highlightStart = 0;
     let highlightEnd = numFrets;
-
-    let colors = ['#D91313', '#DE6817', '#DF7F0D', '#9CD523', '#0E9E09', '#3FC48A', '#1DC9B5', '#2A62CE', '#7F4CD4', '#C04CD4', '#E55EC2', '#E54783'];
-    let noteOptions = ['C', 'C#/Db', 'D', 'D#/Eb', 'E', 'F', 'F#/Gb', 'G', 'G#/Ab', 'A', 'A#/Bb', 'B'];
-    let intervalNames = ['1', 'm2', '2', 'm3', '3', '4', 'b5', '5', '#5', '6', 'm7', '7'];
 
     let fretboard = generateFretboard();
     document.body.appendChild(fretboard);
@@ -29,6 +30,10 @@ window.addEventListener('load', function()
     scaleRootInput.onchange = onScaleRootChanged;
     highlightStartInput.onchange = onHighlightChanged;
     highlightEndInput.onchange = onHighlightChanged;
+
+    document.getElementById('prevmode').onclick = function() { cycleMode(-1); };
+    document.getElementById('nextmode').onclick = function() { cycleMode(1); };
+
 
     generateTuningInputs();
     generateScaleNoteInputs();
@@ -50,13 +55,50 @@ window.addEventListener('load', function()
         return degrees;
     }
 
+    function generateNoteNames(scale)
+    {
+        let scaleNoteNames = [];
+        let scaleI = (12 - scaleRoot) % 12;
+        for (let i = 0; i < 12; i++)
+        {
+            let name = noteOptions[i];
+            console.log('name ' + name);
+            if (name.indexOf('/') >= 0)
+            {
+                let skipped = !scale[(scaleI + 11) % 12];
+                name = name.split('/')[skipped ? 0 : 1];
+                console.log('alter ' + name);
+            }
+            scaleNoteNames.push(name);
+            scaleI = (scaleI + 1) % 12;
+        }
+        return scaleNoteNames;
+    }
+
+    function cycleMode(i)
+    {
+        let step = 1;
+        while (!scale[step])
+        {
+            step++;
+        }
+        scaleRoot = (scaleRoot + step) % 12;
+        for (let i = 0; i < step; i++)
+        {
+            scale.push(scale.shift());
+        }
+        scaleDegrees = generateScaleDegrees(scale);
+        scaleNoteNames = generateNoteNames(scale);
+        updateUI();
+        updateFretboard();
+    }
 
 
     function generateFretboard()
     {
         let fretboard = document.createElement('div');
         fretboard.setAttribute('class', 'fretboard');
-        fretboard.style.height = '250px';
+        fretboard.style.height = (numStrings * 30) + 'px';
         
         let fretPositions = [0];
         let lastPos = 0;
@@ -99,6 +141,7 @@ window.addEventListener('load', function()
         
         function makeDot(fret)
         {
+            let middle = Math.floor(numStrings / 2) - 1;
             let numDots = fret == 12 ? 2 : 1;
             for (let i = 0; i < numDots; i++)
             {
@@ -107,11 +150,11 @@ window.addEventListener('load', function()
                 dot.style.left = (fretPositions[fret - 1] + fretPositions[fret]) / 2 + '%';
                 if (numDots > 1)
                 {
-                    dot.style.bottom = (stringPositions[1 + i * 2] + stringPositions[2 + i * 2]) / 2 + '%';
+                    dot.style.bottom = (stringPositions[middle - 1 + i * 2] + stringPositions[middle + i * 2]) / 2 + '%';
                 }
                 else
                 {
-                    dot.style.bottom = (stringPositions[2] + stringPositions[3]) / 2 + '%';
+                    dot.style.bottom = (stringPositions[middle] + stringPositions[middle + 1]) / 2 + '%';
                 }
                 
                 fretboard.appendChild(dot);
@@ -132,6 +175,8 @@ window.addEventListener('load', function()
             let noteNum = tuning[s];
             for (let f = 0; f < numFrets + 1; f++)
             {
+                let noteI = noteNum % 12;
+                let octaveI = Math.floor(noteNum / 12) - 1;
                 let scaleOffset = (noteNum - scaleRoot) % 12;
                 let note = document.createElement('div');
                 note.setAttribute('class', 'note');
@@ -142,6 +187,7 @@ window.addEventListener('load', function()
                 let highlighted = f >= highlightStart && f <= highlightEnd;
                 note.style.opacity = highlighted ? '100%' : '33%';
                 note.textContent = intervalNames[scaleOffset];
+                note.title = scaleNoteNames[noteI];
                 fretboard.appendChild(note);
                 noteNum++;
             }
@@ -168,9 +214,8 @@ window.addEventListener('load', function()
     {
         while (tuningContainer.children.length > numStrings)
         {
-            tuningContainer.lastElementChild.remove();
+            tuningContainer.firstElementChild.remove();
         }
-
 
         for (let i = tuningContainer.children.length; i < numStrings; i++)
         {
@@ -183,7 +228,7 @@ window.addEventListener('load', function()
             octaveInput.onchange = onTuningChanged;
             noteContainer.appendChild(noteSelect);
             noteContainer.appendChild(octaveInput);
-            tuningContainer.appendChild(noteContainer);
+            tuningContainer.insertBefore(noteContainer, tuningContainer.firstElementChild);
         }
     }
 
@@ -226,6 +271,7 @@ window.addEventListener('load', function()
     {
         numStrings = numStringsInput.value;
         generateTuningInputs();
+        onTuningChanged();
         updateFretboard();
     }
 
@@ -244,6 +290,8 @@ window.addEventListener('load', function()
     function onScaleRootChanged()
     {
         scaleRoot = scaleRootInput.value;
+        scaleDegrees = generateScaleDegrees(scale);
+        scaleNoteNames = generateNoteNames(scale);
         updateFretboard();
     }
 
@@ -254,6 +302,7 @@ window.addEventListener('load', function()
             scale[i + 1] = scaleNotesContainer.children[i].checked;
         }
         scaleDegrees = generateScaleDegrees(scale);
+        scaleNoteNames = generateNoteNames(scale);
         updateFretboard();
     }
 

@@ -1,10 +1,21 @@
 
 .panel
 {
+    padding: 0.5em;
+    margin-bottom: 2em;
     border: solid;
     border-width: 4px;
     border-color: #00F;
-    margin-bottom: 2em;
+    border-radius: 6px;
+}
+
+.panel>div
+{
+     margin-bottom: 0.25em;
+     padding-bottom: 0.25em;
+     border-style: solid;
+     border-width: 0px 0px 1px 0px;
+     border-color: #008;
 }
 
 .fretboard
