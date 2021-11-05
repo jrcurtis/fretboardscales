@@ -27,6 +27,19 @@
     display: inline-block;
 }
 
+.panel .block:not(:last-child)
+{
+    border-style: solid;
+    border-width: 0px 1px 0px 0px;
+    border-color: #008;
+    padding-right: 1em;
+}
+
+.panel .block:not(:first-child)
+{
+    padding-left: 1em;
+}
+
 .fretboard
 {
     position: absolute;

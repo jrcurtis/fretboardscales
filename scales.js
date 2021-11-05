@@ -27,6 +27,7 @@ window.addEventListener('load', function()
     let highlightEndInput = document.getElementById('highlightend');
     let saveNameInput = document.getElementById('savename');
     let loadListSelect = document.getElementById('loadlist');
+    let jsonInput = document.getElementById('json');
 
     numStringsInput.onchange = onNumStringsChanged;
     scaleRootInput.onchange = onScaleRootChanged;
@@ -398,8 +399,11 @@ window.addEventListener('load', function()
                 saveI++;
             }
             name = 'Save ' + saveI;
+            saveNameInput.value = name;
         }
-        storage.setItem(name, toJSON());
+        let json = toJSON();
+        storage.setItem(name, json);
+        jsonInput.value = json;
         populateLoadList();
     }
 
@@ -412,6 +416,7 @@ window.addEventListener('load', function()
         if (json != null)
         {
             loadJSON(json);
+            jsonInput.value = json;
         }
         saveNameInput.value = name;
     }
